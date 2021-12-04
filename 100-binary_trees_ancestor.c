@@ -1,28 +1,65 @@
 #include "binary_trees.h"
 /**
- * binary_trees_ancestor - finds for the lowest common ancestor of two nodes
- * @first: pointer to the first node
- * @second: pointer to the second node
- * Return: pointer to the lowest ancestor/ null if no ancestor
+ * binary_tree_height - function that measures the
+ * height of a binary tree
+ * @tree: pointer to the root node of the tree to measure
+ * Return: if tree is null return 0
  */
-binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
-					const binary_tree_t *second)
+size_t binary_tree_height(const binary_tree_t *tree)
 {
-	binary_tree_t *temp1;
+	int left_height;
+	int right_height;
 
-	if (first == NULL || second == NULL)
-		return (NULL);
-		temp1 = (binary_tree_t *)second;
-		while (first)
-		{
-			while (second)
-			{
-				if (first == second)
-					return ((binary_tree_t *)first);
-			second = second->parent;
-			}
-			first = first->parent;
-			second = temp1;
-		}
-	return (NULL);
+	left_height = 0;
+	right_height = 0;
+	if (!tree)
+		return (0);
+	if (!(tree->right) && !(tree->left))
+		return (0);
+
+	left_height = binary_tree_height(tree->left) + 1;
+	right_height = binary_tree_height(tree->right) + 1;
+
+	if (right_height > left_height)
+		return (right_height);
+	return (left_height);
+}
+
+/**
+ * levelorder - recursively perform a function on a binary tree
+ * in order to traverse it using level order
+ * @tree: tree
+ * @i: index of level
+ * @func: function to perform
+ */
+void levelorder(const binary_tree_t *tree, size_t i, void(*func)(int))
+{
+
+	if (i == 1)
+		func(tree->n);
+	else if (i > 1)
+	{
+		levelorder(tree->left, i - 1, func);
+		levelorder(tree->right, i - 1, func);
+	}
+	else
+		return;
+}
+
+/**
+ * binary_tree_levelorder - function goes trough a binary
+ * tree using level order traversal
+ * @tree: pointer to the root node
+ * @func: pointer to a function to call each node
+ * Return: nothing
+ */
+void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
+{
+	int i, h;
+
+	if (tree == NULL || func == NULL)
+		return;
+	h = binary_tree_height(tree);
+	for (i = 0; i <= h + 1; i++)
+		levelorder(tree, i, func);
 }
